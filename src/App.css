@@ -183,6 +183,9 @@ h3 {
 .ml15{
   margin-left: 15px;
 }
+.ml30{
+  margin-left: 30px;
+}
 
 /* PADDING */
 .p30 {
@@ -271,6 +274,8 @@ button:hover:enabled{
 
 #homeLeft,#homeRight {
   background: var(--bg);
+  margin-bottom: 60px;
+border-radius: 5px;
 }
 #homeLeft {
   padding: 15px 20px;

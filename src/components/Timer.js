@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 const Timer = (props) => {
   const [time, setTime] = useState({});
   useEffect(() => {
-    console.log(props.time);
+    // console.log(props.time);
     const getNewDate = () => {
       // get today's day
       const todayDay = new Date().getDay();
@@ -33,7 +33,7 @@ const Timer = (props) => {
       );
       // time left = subtract date - needed date
       let timeLeft = neededDate.getTime() - new Date().getTime();
-      
+
       const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
       const hours = Math.floor(timeLeft / (1000 * 60 * 60)) % 24;
       const mins = Math.floor(timeLeft / (1000 * 60)) % 60;
@@ -52,17 +52,25 @@ const Timer = (props) => {
       //   secs:secs,
       // });
     };
-    const interval = setInterval(()=>{
+    const interval = setInterval(() => {
       getNewDate();
-
-    },[1000])
+    }, [1000]);
 
     return () => {
-      clearInterval(interval)
+      clearInterval(interval);
     };
-  }, [props.time]);
+  }, [props.time,props.lastUpd]);
 
   // console.log(props,"props",new Date(new Date().getFullYear(),new Date().getMonth(),));
+  if (Number(props.time[0]) === new Date().getDay()) {
+    return (
+      <>
+        <span className="regu12 mt5">
+          Episode {props.ep} will be released today!
+        </span>
+      </>
+    );
+  }
   return (
     <div className="frcsb" style={{ width: props.width }}>
       {Object.keys(time).map((key, i) => (

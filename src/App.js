@@ -1,11 +1,11 @@
 import './App.css';
-import HomePage from './screens/HomePage';
 import React from 'react';
+import RootNavi from './navigation/RootNavi';
 
 function App() {
   return (
     <>
-    <HomePage/>
+    <RootNavi/>
     </>
   );
 }

@@ -1,11 +1,19 @@
 import Header from "../components/Header";
 import HeroArea from "../components/HeroArea";
 import SubHeader from "../components/SubHeader";
-import HomeRight from "../components/HomeRight";
+// import HomeRight from "../components/HomeRight";
 import HomeLeft from "../components/HomeLeft";
-import GenreBox from "../components/GenreBox";
+import { getMangas } from "../firebaseQuery";
+import { useEffect, useState } from "react";
+// import GenreBox from "../components/GenreBox";
 
 const HomePage = () => {
+  const [mangas, setMangas] = useState({});
+  useEffect(() => {
+    getMangas().then((obj) => {
+      setMangas(obj);
+    });
+  }, []);
   return (
     <>
       <Header />
@@ -14,15 +22,17 @@ const HomePage = () => {
         <HeroArea />
       </div>
       <div className="frfs w100 mt30" >
-        <div style={{ width:"70%"}} 
-        className="mr30"
+        <div style={{ flex:2.5}} 
+        className=""
         >
-          <HomeLeft />
+          <HomeLeft mangas={mangas} />
         </div>
-        <div className="" style={{width:"28%"}}>
+        {/* <div className="ml30" 
+        style={{flex:1}}
+        >
           <HomeRight />
           <GenreBox />
-        </div>
+        </div> */}
       </div>
     </>
   );

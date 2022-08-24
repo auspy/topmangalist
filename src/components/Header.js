@@ -8,19 +8,19 @@ const Header = () => {
         <a href="/" id="logo">
           TopMangaList
         </a>
-        <div className="">
+        {/* <div className="">
           <a href="/" className="mr30">
             Manga Countdown
           </a>
           <a href="/">Anime Countdown</a>
-        </div>
+        </div> */}
       </div>
       {/* right side */}
       <div className="frc">
-        <div className="mr30">
+        <div className="">
           <SearchBar />
         </div>
-        <button className="medi14">Sign Up</button>
+        {/* <button className="medi14 ml30">Sign Up</button> */}
       </div>
     </div>
   );
