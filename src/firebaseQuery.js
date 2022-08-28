@@ -125,10 +125,10 @@ export const updateLastUpdated = (obj, key) => {
 };
 
 // get searched docs
-export const getSearchResults = async (item) => {
+export const getSearchResults = async (item,cond="==") => {
   let obj = {};
-  console.log(mangasColPath);
-  const docs = await getDocs(query(mangasColPath(), where("nm", "==", item)));
+  // console.log(mangasColPath,cond);
+  const docs = await getDocs(query(mangasColPath(), where("nm", cond, item)));
   docs.forEach((item) => {
     //  console.log(item.data(), "=>", item.id);
     obj[item.id] = item.data();
