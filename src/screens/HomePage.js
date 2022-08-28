@@ -1,23 +1,22 @@
-import Header from "../components/Header";
 import HeroArea from "../components/HeroArea";
-import SubHeader from "../components/SubHeader";
-// import HomeRight from "../components/HomeRight";
+// import HomeRight from "../components/HomeRght";
 import HomeLeft from "../components/HomeLeft";
 import { getMangas } from "../firebaseQuery";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 // import GenreBox from "../components/GenreBox";
 
 const HomePage = () => {
   const [mangas, setMangas] = useState({});
+  const {pathname}=useLocation()
   useEffect(() => {
+    // console.log("rin"); 
     getMangas().then((obj) => {
       setMangas(obj);
     });
-  }, []);
+  }, [pathname]);
   return (
     <>
-      <Header />
-      <SubHeader />
       <div className="mt30">
         <HeroArea />
       </div>

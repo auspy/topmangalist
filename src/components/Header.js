@@ -1,26 +1,52 @@
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { auth, logout } from "../firebaseQuery";
 import SearchBar from "./SearchBar";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useState } from "react";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const [user] = useAuthState(auth)
+  const {pathname} = useLocation()
+  const [active,setActive]=useState(!pathname.includes("animes"))
   return (
     <div id="header" className="frcsb regu14">
       {/* left side */}
       <div className="frc">
-        <a href="/" id="logo">
+        <Link to="/" id="logo">
           TopMangaList
-        </a>
-        {/* <div className="">
-          <a href="/" className="mr30">
+        </Link>
+        <div className="">
+          <Link to={"/"} className="mr30" style={{color:active?"var(--red)":"white"}} onClick={()=>setActive(true)}>
             Manga Countdown
-          </a>
-          <a href="/">Anime Countdown</a>
-        </div> */}
+          </Link>
+          <Link to={"animes"} style={{color:active?"white":"var(--red)"}} onClick={()=>setActive(false)} >Anime Countdown</Link>
+        </div>
       </div>
       {/* right side */}
       <div className="frc">
         <div className="">
           <SearchBar />
         </div>
-        {/* <button className="medi14 ml30">Sign Up</button> */}
+        {user?.uid ? (
+          <button
+            className="medi14 ml30"
+            onClick={() => {
+              logout();
+            }}
+          >
+            {user?.displayName??"Logout"}
+          </button>
+        ) : (
+          <button
+            className="medi14 ml30"
+            onClick={() => {
+              navigate("/login");
+            }}
+          >
+            Login
+          </button>
+        )}
       </div>
     </div>
   );

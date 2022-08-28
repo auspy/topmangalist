@@ -26,7 +26,7 @@ con.connect((err) => {
 
 
 app.post("/searchResults", (req, res) => {
-    let q = "SELECT Name FROM mangas WHERE Name LIKE '%" + req.body.data + "%'";
+    let q = "SELECT Name FROM "+req.body.table+" WHERE Name LIKE '%" + req.body.data + "%'";
     // let q = "DESC mangas"
     con.query(q, (err, docs) => {
       if (err) throw err;

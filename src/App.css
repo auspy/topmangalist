@@ -8,12 +8,17 @@
   --dark: #212425;
   --red: #db2445;
   --lightBlack: #424242;
-  --bg:#292929;
+  --bg: #292929;
+  --yellow: #ffe921;
 }
 
 a {
   text-decoration: none;
   color: white;
+}
+
+a:hover {
+  cursor: pointer;
 }
 
 a:hover {
@@ -34,8 +39,32 @@ button {
   font-family: "Poppins";
 }
 
+.redBtn {
+  background: #db2445;
+  border: 1px solid #ffffff;
+  width: 244.25px;
+  height: 61px;
+}
+.whiteBtn,
+.redBtn {
+  border-radius: 10px;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 700;
+}
+.whiteBtn {
+  width: 245.25px;
+  height: 85px;
+  color: var(--red);
+  background: #ffffff;
+
+  border: 1px solid #db2445;
+  border-radius: 10px;
+}
+
 #root {
-  width: 1200px;
+  /* width: 1200px; */
+  width: 85%;
 }
 
 /* COMMON */
@@ -62,7 +91,8 @@ h2 {
 }
 
 .medi,
-h3,.medi13 {
+h3,
+.medi13 {
   font-weight: 500;
 }
 
@@ -85,15 +115,18 @@ h3 {
 
 .regu14,
 .regu,
-.regu13,.regu12 {
+.regu13,
+.regu12 {
   font-weight: 400;
 }
 
-.medi12,.regu12 {
+.medi12,
+.regu12 {
   font-size: 12px;
 }
 
-.regu13,.medi13 {
+.regu13,
+.medi13 {
   font-size: 13px;
 }
 
@@ -111,47 +144,55 @@ h3 {
   flex: 1;
 }
 
-.fcfs,.fcfssb,
+.fcfs,
+.fcfssb,
 .frc,
 .fcc,
 .frcsb,
-.fccsb,.frcsa,.frfs {
+.fccsb,
+.frcsa,
+.frfs {
   display: flex;
 }
 
 .frc,
 .fcc,
 .frcsb,
-.fccsb,.frcsa,.frfs {
+.fccsb,
+.frcsa,
+.frfs {
   flex-direction: row;
   align-items: center;
 }
 
-.frfs{
+.frfs {
   align-items: flex-start;
 }
 
-
 .fcc,
 .fccsb,
-.fcfs,.fcfssb {
+.fcfs,
+.fcfssb {
   flex-direction: column;
 }
 
-.fcfs,.fcfssb {
+.fcfs,
+.fcfssb {
   align-items: flex-start;
 }
 
 .frcsb,
-.fccsb,.fcfssb {
+.fccsb,
+.fcfssb {
   justify-content: space-between;
 }
 
-.frcsa{
+.frcsa {
   justify-content: space-around;
 }
 
-.gcc {
+.gcc,
+button {
   display: grid;
   align-items: center;
   /* justify-content: center; */
@@ -163,14 +204,24 @@ h3 {
 .mr30 {
   margin-right: 30px;
 }
+.mr5 {
+  margin-right: 5px;
+}
+/* bottom */
+.mb20 {
+  margin-bottom: 20px;
+}
 /* horizontal */
-.mh10{
+.mh10 {
   margin-left: 10px;
   margin-right: 10px;
 }
 /* top */
 .mt30 {
   margin-top: 30px;
+}
+.mt40 {
+  margin-top: 40px;
 }
 .mt15 {
   margin-top: 15px;
@@ -180,10 +231,10 @@ h3 {
 }
 
 /* left */
-.ml15{
+.ml15 {
   margin-left: 15px;
 }
-.ml30{
+.ml30 {
   margin-left: 30px;
 }
 
@@ -203,9 +254,9 @@ h3 {
   font-size: 24px;
   margin-right: 50px;
 }
-.searchBar{
-background: #2E3335;
-border: 1px solid #383F41;
+.searchBar {
+  background: #2e3335;
+  border: 1px solid #383f41;
   border-radius: 5px;
   height: 38px;
   width: 280px;
@@ -218,7 +269,7 @@ border: 1px solid #383F41;
 #subheader {
   height: 44px;
   background: var(--red);
-  width: 100vw;
+  width: 100%;
   top: 100px;
   left: 0;
   position: absolute;
@@ -243,6 +294,48 @@ border: 1px solid #383F41;
   border-radius: 5px;
   padding: 3px 16px;
 }
+.linkBtn,
+.relDateCont,
+#timerCont {
+  /* search bar */
+
+  background: #2e3335;
+
+  /* stroke */
+
+  border: 1px solid #383f41;
+  border-radius: 10px;
+}
+
+.linkBtn {
+  width: 302px;
+  height: 58px;
+
+  /* font */
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.linkBtn:enabled:hover,
+.linkBtn:hover {
+  box-shadow: 0px 4px 20px rgba(219, 36, 69, 0.7),
+    0px -4px 20px rgba(255, 255, 255, 0.5);
+  opacity: 1;
+}
+
+button:hover:enabled {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.likeBtn {
+  height: 30px;
+  /* width: ; */
+  background: white;
+  color: var(--bg);
+  padding: 0 15px 0 10px;
+  border-radius: 5px;
+}
 
 /* OVERLAYS - LAYER */
 .darkLayer {
@@ -257,11 +350,6 @@ border: 1px solid #383F41;
   z-index: 3;
 }
 
-button:hover:enabled{
-  opacity: 0.7;
-  cursor: pointer;
-}
-
 /* LINE */
 
 .lightLine {
@@ -272,28 +360,40 @@ button:hover:enabled{
 
 /* HOME */
 
-#homeLeft,#homeRight {
+#homeLeft,
+#homeRight {
   background: var(--bg);
   margin-bottom: 60px;
-border-radius: 5px;
+  border-radius: 5px;
 }
 #homeLeft {
   padding: 15px 20px;
 }
 
-#homeRight{
+#homeRight {
   padding: 15px 0;
 }
 
 #homeLeftContent {
-  /* display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between; */
   display: grid;
   grid-template-columns: repeat(auto-fit, 180px);
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: flex-start;
   row-gap: 30px;
   margin-top: 20px;
+  width: 100%;
+  column-gap: 20px;
 }
 
+/* MANGA DETAILS PAGE */
+.relDateCont {
+  width: 179px;
+  height: 176px;
+  justify-content: center;
+}
+
+#timerCont {
+  width: 692.67px;
+  justify-content: center;
+  height: 176px;
+}

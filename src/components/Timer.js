@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+// import { useLocation } from "react-router-dom";
 
 // const dProp = {
 //   width: "100%",
@@ -12,6 +13,10 @@ import { useEffect, useState } from "react";
 // };
 
 const Timer = (props) => {
+  // const {pathname}=useLocation()
+  // console.log('====================================');
+  // console.log(pathname,props);
+  // console.log('====================================');
   const [time, setTime] = useState({});
   useEffect(() => {
     // console.log(props.time);
@@ -76,12 +81,12 @@ const Timer = (props) => {
       {Object.keys(time).map((key, i) => (
         <div className="fcc" key={key + i}>
           <span
-            className="medi frc"
-            style={{ fontSize: props.size, height: 14 }}
+            className={`medi frc ${props.timerClass}`}
+            style={{ fontSize: props.size, height: 14,...props.timerStyle }}
           >
             {time[key]}
           </span>
-          <span className="regu12 frc mt5 caps" style={{ height: 10 }}>
+          <span className="regu12 frc mt5 caps" style={{ height: 10,...props.headingStyle }}>
             {key}
           </span>
         </div>

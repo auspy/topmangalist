@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
-import { getSearchResults } from "../firebaseQuery";
+import { useState } from "react";
 import IconSearch from "../static/icons/IconSearch";
 import { useNavigate } from "react-router-dom";
+import { getPath } from "../firebaseQuery";
 
 const SearchBar = () => {
   const [search, setSearch] = useState("");
-  const [result, setResult] = useState({});
-
-  // navigate to results page with this data
   const navigation = useNavigate();
 
   return (
@@ -15,7 +12,7 @@ const SearchBar = () => {
       <div className="rPosi">
         <input
           className="searchBar regu14"
-          placeholder="Search"
+          placeholder={`Search ${getPath()}`}
           value={search}
           onChange={(e) => {
             console.log(e.target.value);
@@ -30,15 +27,16 @@ const SearchBar = () => {
             // to fetch function
             toFetch("http://192.168.18.107:8000/searchResults", {
               data: search,
+              table:getPath(),
             }).then((res) => {
-              const path = `/SearchResults?search=${search
-                .split(" ")
-                .join("%20")}`;
+              const path = `/${getPath()}/SearchResults?search=${search}`;
+              console.log(res,"res");
               navigation(path, {
                 state: {
-                  info: res,
+                  info: res.length?res:[],
                 },
               });
+              setSearch("")
             });
           }}
         >

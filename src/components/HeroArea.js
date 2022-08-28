@@ -1,15 +1,27 @@
 import { useEffect, useState } from "react";
-import { getLikedMangas } from "../firebaseQuery";
+import { getLikedMangas, getPath } from "../firebaseQuery";
+import { useLocation, useNavigate } from "react-router-dom";
 import Timer from "./Timer";
 
 const HeroArea = () => {
+  const navigation = useNavigate();
   const [top4, setTop4] = useState([]);
+  const { pathname } = useLocation();
+  const [width, setWidth] = useState(window.innerWidth);
   useEffect(() => {
     getLikedMangas().then((obj) => {
       // obj[1] has arr type data
       setTop4(obj[1]);
       // console.log(top4,"top4");
     });
+  }, [pathname]);
+  useEffect(() => {
+    const handleResize=()=>{
+      setWidth(window.innerWidth);
+      console.log(window.innerWidth);
+    }
+    window.addEventListener("resize",handleResize)
+    return window.removeEventListener("resize",handleResize)
   }, []);
 
   if (!Boolean(top4.length)) {
@@ -19,16 +31,26 @@ const HeroArea = () => {
       </>
     );
   } else {
+    // console.log(window.innerWidth);
     return (
       <div className="frc" style={{ width: "100%", height: 382 }}>
         {/* big */}
-        <div
+        <button
+          onClick={() => {
+            navigation(`/${getPath()}/name/${top4[0].nm}`, {
+              state: {
+                info: top4[0],
+                id: top4[0].id
+              },
+            });
+          }}
           style={{
             // width: 713,
-            flex: 2,
+            flex: 1.75,
             height: "100%",
             overflow: "hidden",
             position: "relative",
+            display: width < 800 ? "none" : null,
             //   backgroundImage:"url('../static/images/resource.webp')",
             //   backgroundRepeat:"no-repeat",
             //   backgroundSize:"100% 100%",
@@ -65,17 +87,25 @@ const HeroArea = () => {
               zIndex: 0,
             }}
           />
-        </div>
+        </button>
         {/* smaller */}
         <div
           className="fcc"
           style={{
             // width: 489,
-            flex: 1,
+            flex: 1.25,
             height: "inherit",
           }}
         >
-          <div
+          <button
+            onClick={() => {
+              navigation(`/${getPath()}/name/${top4[1].nm}`, {
+                state: {
+                  info: top4[1],
+                  id: top4[1].id,
+                },
+              });
+            }}
             style={{
               width: "inherit",
               height: "50%",
@@ -107,7 +137,7 @@ const HeroArea = () => {
               alt="manga cover 2"
               style={{ width: "100%" }}
             />
-          </div>
+          </button>
           {/* 2 smallest */}
           <div
             style={{
@@ -116,12 +146,22 @@ const HeroArea = () => {
               height: "50%",
               position: "relative",
               overflow: "hidden",
-              minWidth: 489,
+              // minWidth: 489,
             }}
             className="frc"
           >
-            <div style={{ width: "50%", height: "100%" }}>
-              <div className="darkLayer" />
+            <button
+              onClick={() => {
+                navigation(`/${getPath()}/name/${top4[2].nm}`, {
+                  state: {
+                    info: top4[2],
+                    id: top4[2].id,
+                  },
+                });
+              }}
+              style={{ width: "50%", height: "100%" }}
+            >
+              <div className="darkLayer" style={{ width: "inherit" }} />
               {/* info */}
               <div
                 className="aPosi z10 p30 fccsb"
@@ -150,9 +190,19 @@ const HeroArea = () => {
                 alt="manga cover 2"
                 style={{ width: "100%" }}
               />
-            </div>
-            <div style={{ width: "50%", height: "100%" }}>
-              <div className="darkLayer" />
+            </button>
+            <button
+              onClick={() => {
+                navigation(`/${getPath()}/name/${top4[3].nm}`, {
+                  state: {
+                    info: top4[3],
+                    id: top4[3].id,
+                  },
+                });
+              }}
+              style={{ width: "50%", height: "100%" }}
+            >
+              <div className="darkLayer" style={{ width: "inherit" }} />
               {/* info */}
               <div
                 className="aPosi z10 p30 fccsb"
@@ -181,7 +231,7 @@ const HeroArea = () => {
                 alt="manga cover 2"
                 style={{ width: "100%" }}
               />
-            </div>
+            </button>
           </div>
         </div>
       </div>
