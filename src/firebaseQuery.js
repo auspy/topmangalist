@@ -25,16 +25,18 @@ import db, { firebaseApp } from "./firebase";
 
 // common variables
 export const auth = getAuth(firebaseApp);
-export let uid=auth?.currentUser?.uid, username=auth?.currentUser?.displayName, user=auth?.currentUser;
+export let uid = auth?.currentUser?.uid,
+  username = auth?.currentUser?.displayName,
+  user = auth?.currentUser;
 onAuthStateChanged(auth, (u) => {
-  if (u.uid) {
-    // console.log("====================================");
-    // console.log(u, " logged in");
-    // console.log("====================================");
+  try {
+    if (u?.uid?.length) {
     uid = u.uid;
     username = u.displayName;
     user = u;
-  } else {
+    }
+  } catch (error) {
+    console.log(error);
     uid = "";
     username = "";
     user = {};
@@ -50,12 +52,12 @@ export const getPath = () => {
 // gpath to manga/anime collection
 const mangasColPath = () => collection(db, getPath()); //col = collection
 // path to user col
-const userColPath=(id)=>{
+const userColPath = (id) => {
   return query(collection(db, "users"), where("id", "==", id));
-}
+};
 // gets needed user doc using uid
 const userDoc = async () => {
-  console.log(uid);
+  // console.log(uid);
   let obj = "";
   const docs = await getDocs(userColPath(uid));
   docs.forEach((i) => {
@@ -69,7 +71,6 @@ const userDocPath = async () => {
   // console.log(d);
   return doc(db, "users", d);
 };
-
 
 // get mangas
 export const getMangas = async () => {
@@ -125,7 +126,7 @@ export const updateLastUpdated = (obj, key) => {
 };
 
 // get searched docs
-export const getSearchResults = async (item,cond="==") => {
+export const getSearchResults = async (item, cond = "==") => {
   let obj = {};
   // console.log(mangasColPath,cond);
   const docs = await getDocs(query(mangasColPath(), where("nm", cond, item)));
@@ -234,11 +235,11 @@ export const addToLiked = async (liked, name) => {
 
 // get liked docs
 export const getLikedDocs = async (id) => {
-  let arr =[];
+  let arr = [];
   const docs = await getDocs(userColPath(id));
-  docs.forEach((i)=>{
-    arr=i.data()["lk"]
-  })
+  docs.forEach((i) => {
+    arr = i.data()["lk"];
+  });
   // console.log(arr);
-  return arr
+  return arr;
 };

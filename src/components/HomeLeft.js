@@ -5,13 +5,21 @@ import ItemBox from "./ItemBox";
 
 const HomeLeft = (props) => {
   const [likeStat, setLikeStat] = useState([]);
+  const [uid, setUid] = useState("");
   useEffect(() => {
     onAuthStateChanged(auth, (u) => {
-      getLikedDocs(u.uid).then((o) => {
-        setLikeStat(o.length ? o : []);
-      });
+      try {
+        if (u?.uid?.length) {
+          setUid(u.uid);
+          getLikedDocs(u.uid).then((o) => {
+            setLikeStat(o.length ? o : []);
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     });
-  }, [props]);
+  }, []);
   return (
     <div id="homeLeft">
       {/* heading */}
@@ -30,7 +38,8 @@ const HomeLeft = (props) => {
                 id={key}
                 key={key + i}
                 liked={likeStat?.includes(props.mangas[key]["nm"])}
-                test={props.mangas[key]["nm"]}
+                // test={props.mangas[key]["nm"]}
+                uid={uid}
               />
             ))
           ) : (

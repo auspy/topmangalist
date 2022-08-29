@@ -7,12 +7,12 @@ const SubHeader = () => {
       <div id="subheaderContent" className="frcsb">
         {/* left */}
         <div className="frc upper">
-          <Link to={`${pathname.includes("animes")?"animes":"mangas"}/myCountDowns`}>My Countdowns</Link>
+          <Link to={`${pathname.includes("animes")?"animes":"mangas"}/myCountdowns`}>My Countdowns</Link>
                     {/* <a href="/" >Trending</a>
                     <a href="/" >upcoming</a>
                     <a href="/" >airing soon</a> */}
         </div>
-        <div className="regu12">My gift to manga/anime community. New functionalities coming soon!</div>
+        <div className="regu12">My gift to manga/anime community.</div>
         {/* right */}
         {/* <button id="surpriseBtn" className="caps" onClick={()=>{
                     alert("funtionality to be added!")

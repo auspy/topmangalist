@@ -5,25 +5,40 @@ import {  auth, getLikedDocs, getSearchResults } from "../firebaseQuery";
 
 const MyCountdown = () => {
   const [res, setRes] = useState({});
+  const [uid,setUid]=useState("")
   useEffect(() => {
-    console.log("run");
     onAuthStateChanged(auth,(user)=>{
-      getLikedDocs(user.uid).then((a) => {
-        console.log(a);
-        getSearchResults(a,"in").then((res) => {
-          console.log("====================================");
-          console.log(res);
-          setRes(res)
-          console.log("====================================");
-        });
-      });
+      try {
+        if (user?.uid?.length) {
+          setUid(user.uid)
+          getLikedDocs(user.uid).then((a) => {
+            console.log(a);
+            getSearchResults(a,"in").then((res) => {
+              // console.log(res);
+              setRes(res)
+            });
+          })
+        }
+      } catch (error) {
+        setUid("")
+        console.log(error);
+      }
     })
   }, []);
-  return (
+  if (uid?.length) {
+    return (
+      <div className="mt30 w100">
+        <HomeLeft mangas={res} />
+      </div>
+    );
+  } else {
+    return(
     <div className="mt30 w100">
-      <HomeLeft mangas={res} />
-    </div>
-  );
+        <h1>Login to create a list.</h1>
+      </div>
+
+    )
+  }
 };
 
 export default MyCountdown;

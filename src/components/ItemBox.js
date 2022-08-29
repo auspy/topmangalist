@@ -2,13 +2,13 @@ import Timer from "./Timer";
 import { useNavigate } from "react-router-dom";
 import { addToLiked, getPath } from "../firebaseQuery";
 import IconHeart from "../static/icons/IconHeart";
-import {  useEffect, useState } from "react";
+import { useState } from "react";
+import { alertConfirm } from "../common";
 // import platform from "platform"
 
 const ItemBox = (props) => {
   const [liked,setLiked]=useState(props.liked?props.liked:false)
   const navigation = useNavigate();
-  useEffect(()=>{})
   return (
     <div className="fcfs rPosi">
       {/* like btn */}
@@ -17,8 +17,12 @@ const ItemBox = (props) => {
         style={{ top: 15, right: 15, zIndex: 10 }}
         title={"Like Countdown"}
         onClick={() => {
-          setLiked(!liked)
-          addToLiked(liked,props.info.nm)
+          if (props.uid) {
+            setLiked(!liked);
+            addToLiked(liked, props.info.nm);
+          } else {
+            alertConfirm("Login to add countdown to list. Want to login now?",()=>navigation("/login"))
+          }
         }}
       >
         <IconHeart liked={liked} />

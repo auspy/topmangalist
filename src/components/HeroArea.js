@@ -20,8 +20,8 @@ const HeroArea = () => {
       setWidth(window.innerWidth);
       console.log(window.innerWidth);
     }
-    window.addEventListener("resize",handleResize)
-    return window.removeEventListener("resize",handleResize)
+   window.onresize = handleResize
+return  window.onresize = handleResize
   }, []);
 
   if (!Boolean(top4.length)) {
@@ -50,7 +50,7 @@ const HeroArea = () => {
             height: "100%",
             overflow: "hidden",
             position: "relative",
-            display: width < 800 ? "none" : null,
+            display: width < 845 ? "none" : null,
             //   backgroundImage:"url('../static/images/resource.webp')",
             //   backgroundRepeat:"no-repeat",
             //   backgroundSize:"100% 100%",
