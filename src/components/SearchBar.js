@@ -20,7 +20,7 @@ const SearchBar = () => {
           }}
         />
         <button
-          className="aPosi"
+          className="aPosi bgNone"
           disabled={!search.length}
           style={{ right: 15, top: 9 }}
           onClick={() => {

@@ -10,7 +10,7 @@ function App() {
   const [ham, setHam] = useState(window.innerWidth > 1100 ? false : true); //hamburger
   useEffect(() => {
     const handleResize = () => {
-      console.log(window.innerWidth);
+      // console.log(window.innerWidth);
       if ( window.innerWidth > 1100) {
         setHam(false);
         // setIsOpen(true);

@@ -27,6 +27,15 @@ const Timer = (props) => {
       const todayDate = new Date().getDate();
       // get needed day
       const mangaDay = Number(props.time[0]);
+      //get hour, minutes if length of time is greater than 1
+      let hour = 0;
+      let min = 0;
+      if (props.time.length > 1) {
+        // console.log(props.time.split(":")[1].substring(0,2));
+        hour = props.time.split(":")[0].substring(2);
+        min = props.time.split(":")[1].substring(0, 2);
+      }
+      // console.log(hour);
       // get num of days left till needed date
       const diff = mangaDay - todayDay;
       const daysLeft = diff > 0 ? diff : diff + 7;
@@ -34,7 +43,8 @@ const Timer = (props) => {
       const neededDate = new Date(
         new Date().getFullYear(),
         new Date().getMonth(),
-        todayDate + daysLeft
+        todayDate + daysLeft,
+        hour,min
       );
       // time left = subtract date - needed date
       let timeLeft = neededDate.getTime() - new Date().getTime();
@@ -50,6 +60,12 @@ const Timer = (props) => {
         mins: mins,
         secs: secs,
       });
+      // return {
+      //     days:days,
+      //     hours:hours,
+      //     mins:mins,
+      //     secs:secs,
+      //   }
       // console.log({
       //   days:days,
       //   hours:hours,
@@ -64,7 +80,7 @@ const Timer = (props) => {
     return () => {
       clearInterval(interval);
     };
-  }, [props.time,props.lastUpd]);
+  }, [props.time, props.lastUpd]);
 
   // console.log(props,"props",new Date(new Date().getFullYear(),new Date().getMonth(),));
   if (Number(props.time[0]) === new Date().getDay()) {
@@ -82,11 +98,14 @@ const Timer = (props) => {
         <div className="fcc" key={key + i}>
           <span
             className={`medi frc ${props.timerClass}`}
-            style={{ fontSize: props.size, height: 14,...props.timerStyle }}
+            style={{ fontSize: props.size, height: 14, ...props.timerStyle }}
           >
             {time[key]}
           </span>
-          <span className="regu12 frc mt5 caps" style={{ height: 10,...props.headingStyle }}>
+          <span
+            className="regu12 frc mt5 caps"
+            style={{ height: 10, ...props.headingStyle }}
+          >
             {key}
           </span>
         </div>

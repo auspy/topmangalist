@@ -10,6 +10,7 @@
   --lightBlack: #424242;
   --bg: #292929;
   --yellow: #ffe921;
+  --searchBg:#2e3335;
 }
 
 a {
@@ -44,9 +45,25 @@ button {
   border: 1px solid #ffffff;
   /* height: 61px; */
   padding: 20px 0;
+  color: white;
 }
+button:disabled,.redBtn:disabled{
+  background: #5D686C;
+  border: 1px solid #4C575B;
+  border-radius: 10px;
+  color: #3C4447;
+}
+
+.socialMediaBtn{
+  background: #FFFFFF;
+  border: 1px solid #E2E2E2;
+  border-radius: 10px;  
+  color: #383F41;
+  padding: 15px 0;
+}
+
 .whiteBtn,
-.redBtn {
+.redBtn,.socialMediaBtn {
   width: 100%;
   border-radius: 10px;
   text-transform: uppercase;
@@ -437,4 +454,9 @@ button:hover:enabled {
 
 .textCenter{
 text-align: center;
+}
+
+.bgNone,.bgNone:disabled{
+  background: none;
+  border: none;
 }

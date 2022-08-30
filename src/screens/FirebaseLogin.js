@@ -1,7 +1,13 @@
-import { auth, logInWithEmailAndPassword, sendPasswordReset, signInWithGoogle } from "../firebaseQuery";
+import {
+  auth,
+  logInWithEmailAndPassword,
+  // sendPasswordReset,
+  signInWithGoogle,
+} from "../firebaseQuery";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import IconGoogle from "../static/icons/IconGoogle"
 
 const FirebaseLogin = () => {
   const [email, setEmail] = useState("");
@@ -12,22 +18,29 @@ const FirebaseLogin = () => {
   useEffect(() => {
     if (loading) {
       // maybe trigger a loading screen
-      console.log(loading,"loading");
+      console.log(loading, "loading");
       return;
     }
-    if (user){
-      console.log('====================================');
-      console.log(user,"user");
-      console.log('====================================');
-       navigate("/")};
-  }, [user, loading,navigate]);
+    if (user) {
+      console.log("====================================");
+      console.log(user, "user");
+      console.log("====================================");
+      navigate("/");
+    }
+  }, [user, loading, navigate]);
 
   return (
     <>
-      <div className="fcc">
+    <div className="fcfs mt40">
+      <Link to={"/"} style={{color:"var(--red)",}} className={"mr5 bold24"}>TOPMANGALIST</Link>
+      <h2 className="bold24"> LOGIN</h2>
+    </div>
+      <div className="fcc mt40">
         <form action="" className="fcc">
           <input
             type={"email"}
+            className={`searchBar`}
+            placeholder={"Enter Email"}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -35,29 +48,47 @@ const FirebaseLogin = () => {
           />
           <input
             type={"password"}
+            placeholder={"Password"}
+
+            className={`searchBar mt15`}
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
             }}
-            className="mt15"
           />
-          <input type={"button"} value={"Submit"} className="mt15" onClick={()=>{
-            logInWithEmailAndPassword(email,password)
-          }} />
-        <button
-          onClick={() => {
-            sendPasswordReset(email)
-          }}
-        >
-          Forgot Password?
-        </button>
+           <button
+          className="mt15"
+          style={{alignSelf:"flex-start"}}
+            onClick={() => {
+              // sendPasswordReset(email)
+              alert("function to be added");
+            }}
+          >
+            Forgot Password?
+          </button>
+          <input
+            type={"button"}
+            disabled={!email.length || !password.length}
+            value={"Submit"}
+            className="mt15 redBtn"
+            style={{padding:"15px 0"}}
+            onClick={() => {
+              logInWithEmailAndPassword(email, password);
+            }}
+          />
         </form>
         <button
+        className="mt15 socialMediaBtn"
           onClick={() => {
             signInWithGoogle();
           }}
         >
-          Google
+          <div className="frc">
+            <IconGoogle/><span className="ml15">
+              
+              Google
+            </span>
+          </div>
         </button>
       </div>
     </>
