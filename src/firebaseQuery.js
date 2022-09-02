@@ -1,10 +1,11 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import {
   getDocs,
   collection,
   query,
   orderBy,
   limit,
+  getDoc,
   updateDoc,
   doc,
   increment,
@@ -31,9 +32,9 @@ export let uid = auth?.currentUser?.uid,
 onAuthStateChanged(auth, (u) => {
   try {
     if (u?.uid?.length) {
-    uid = u.uid;
-    username = u.displayName;
-    user = u;
+      uid = u.uid;
+      username = u.displayName;
+      user = u;
     }
   } catch (error) {
     console.log(error);
@@ -56,7 +57,7 @@ const userColPath = (id) => {
   return query(collection(db, "users"), where("id", "==", id));
 };
 // gets needed user doc using uid
-const userDoc = async () => {
+export const userDoc = async () => {
   // console.log(uid);
   let obj = "";
   const docs = await getDocs(userColPath(uid));
@@ -195,10 +196,12 @@ export const logInWithEmailAndPassword = async (email, password) => {
 // register using email pass
 export const registerWithEmailAndPassword = async (name, email, password) => {
   try {
+    let n = toCapitalise(name);
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
+    updateUserDisplayName(user, n);
     await addDoc(collection(db, "users"), {
-      nm: user.displayName,
+      nm: n,
       aP: "local",
       em: user.email,
       id: user.uid,
@@ -207,6 +210,23 @@ export const registerWithEmailAndPassword = async (name, email, password) => {
     console.error(err);
     alert(err.message);
   }
+};
+
+// to update name
+export const updateUserDisplayName = async (user, newName) => {
+  updateProfile(user, {
+    displayName: newName,
+  })
+    .then(() => {
+      // Profile updated!
+      // ...
+      console.log("Profile updated!");
+    })
+    .catch((error) => {
+      // An error occurred
+      // ...
+      console.log(error, "in updating profile");
+    });
 };
 
 // password reset
@@ -228,6 +248,7 @@ export const addToLiked = async (liked, name) => {
     await updateDoc(await userDocPath(), {
       lk: liked ? arrayRemove(name) : arrayUnion(name),
     });
+    console.log("liked ", name);
   } catch (error) {
     console.log(error);
   }
@@ -242,4 +263,45 @@ export const getLikedDocs = async (id) => {
   });
   // console.log(arr);
   return arr;
+};
+
+// CAPITALISE
+export const toCapitalise = (item) => {
+  return item
+    .split(" ")
+    .map((item) => {
+      return item[0].toUpperCase() + item.substring(1);
+    })
+    .join(" ");
+};
+
+// get notify docs
+const notifyDoc = (user) => doc(db, "users", user, "info", "notify");
+export const getNotifyDocs = async () => {
+  let info = [];
+  let u = await userDoc();
+  try {
+    
+    const docs = await getDoc(notifyDoc(u));
+    if (docs.exists()) {
+      info = docs.data()["ar"];
+    }
+    return info;
+  } catch (error) {
+    console.log(error);
+    return info
+  }
+
+};
+
+// add to notify
+export const updateNotify = async (notify, item) => {
+  let u = await userDoc();
+  try {
+    await updateDoc(notifyDoc(u), {
+      ar: notify ? arrayRemove(item) : arrayUnion(item),
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };

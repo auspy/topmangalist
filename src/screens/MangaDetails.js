@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { alertConfirm, months } from "../common";
+import { alertConfirm, months, toFetch } from "../common";
 import Timer from "../components/Timer";
 import {
   addToLiked,
   auth,
   getLikedDocs,
   getMangaDetails,
+  getNotifyDocs,
+  updateNotify,
+  userDoc,
 } from "../firebaseQuery";
 import IconHeart from "../static/icons/IconHeart";
 // import { DiscussionEmbed } from "disqus-react";
@@ -20,8 +23,9 @@ const MangaDetails = (props) => {
   const [details, setDetails] = useState({});
   const date = new Date(state?.info?.lu?.seconds * 1000);
   const [liked, setLiked] = useState(state?.liked ? state?.liked : false);
-  const [notify, setNotify] = useState();
+  const [notify, setNotify] = useState(false);
   const [uid, setUid] = useState("");
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
   // get details
@@ -35,9 +39,31 @@ const MangaDetails = (props) => {
     onAuthStateChanged(auth, (user) => {
       try {
         setUid(user.uid);
+        // console.log(user);
+        // to check if email is valid
+        if (user.emailVerified) {
+          setEmail(user.email);
+        } else {
+          setEmail(false);
+        }
         getLikedDocs(user.uid).then((o) => {
           // console.log(o.includes(state?.info?.nm),o,"o");
           setLiked(o.includes(state?.info?.nm));
+        });
+        getNotifyDocs().then((arr) => {
+          if (arr.length) {
+            // if there are items in notify
+            if (arr.includes(state?.info?.nm)) {
+              // if items includes this manga
+              setNotify(true);
+            } else {
+              // if items does not include this manga
+              setNotify(false);
+            }
+          } else {
+            // if there is no array
+            setNotify(false);
+          }
         });
       } catch (error) {
         console.log(error);
@@ -50,18 +76,18 @@ const MangaDetails = (props) => {
       {/* details area */}
       <div
         style={{
-          height: props.ham?null:300,
+          height: props.ham ? null : 300,
         }}
         className={`${props.ham ? "fcc" : "frc"} w100 mt40 rPosi`}
       >
         <div
           style={{
-            width: props.ham?216:316,
-            height:"inherit",
+            width: props.ham ? 216 : 316,
+            height: "inherit",
             borderRadius: 10,
             overflow: "hidden",
           }}
-          className={`frc ${props.ham?null:"mr30"}`}
+          className={`frc ${props.ham ? null : "mr30"}`}
         >
           <img
             src={`https://lh3.googleusercontent.com/qoB8QT1F8evNSQXq67LGM2nMylsMfWEhMhXhZdBtPscno_RKkJM4VczgQdsgBxLBwY4=w2400`}
@@ -71,7 +97,7 @@ const MangaDetails = (props) => {
         </div>
         <div className="fcfs rPosi w100" style={{ height: "inherit" }}>
           {/* rating */}
-          <div className={`frc ${props.ham?"mv20":"mb20"}`}>
+          <div className={`frc ${props.ham ? "mv20" : "mb20"}`}>
             <span
               style={{ fontSize: 24, color: "var(--yellow)" }}
               className="mr30"
@@ -140,9 +166,12 @@ const MangaDetails = (props) => {
       {/* timer area */}
       <div className={`${props.ham ? "fcc" : "frcsb"} mt40 w100`}>
         {/* btns + rel date  */}
-        <div className={"frcsb w100"} style={{flex:0.75,height:176}}>
+        <div className={"frcsb w100"} style={{ flex: 0.75, height: 176 }}>
           {/* btns */}
-          <div className={`fccsb ${props.ham?"mr20":"mr30"}`} style={{ height: "100%",width:props.ham?"100%":245.25 }}>
+          <div
+            className={`fccsb ${props.ham ? "mr20" : "mr30"}`}
+            style={{ height: "100%", width: props.ham ? "100%" : 245.25 }}
+          >
             {/* like btn */}
             <button
               className="whiteBtn"
@@ -165,12 +194,68 @@ const MangaDetails = (props) => {
               </div>
             </button>
             {/* notify btn */}
-            <button
+            <input
+              type={"button"}
               className="redBtn"
-              onClick={() => {
+              style={{
+                paddingLeft: 25,
+                paddingRight: 25,
+                whiteSpace: "normal",
+                lineHeight: 1.4,
+              }}
+              value={
+                notify
+                  ? "👍 You will be notified on release"
+                  : "Notify me when released"
+              }
+              onClick={async (e) => {
                 if (uid) {
-                  setNotify(!notify);
-                  // send to mailchimp
+                  e.target.value = "Loading";
+                  // setNotify(!notify);
+                  // if (notify) {
+                  //   // remove form mailchimp
+                  //   // remove from notify
+                  //   updateNotify(notify,state?.info?.nm)
+                  //   setNotify(false);
+                  // } else {
+                    if (email) {
+                      // verified email
+                      // get user doc
+                      let data = {};
+                      await userDoc().then((val) => {
+                        data["id"] = val;
+                      });
+                      // send to backend for mailchimp
+                      toFetch("http://localhost:8000/addToList", {
+                        data: data["id"],
+                        mail: email,
+                        manga: state.info.nm,
+                        notify: notify,
+                      }).then((val) => {
+                        console.log(val, "mail");
+                        if (
+                          // val &&
+                          val?.status === "ok"
+                          //  && Object.keys(val).length
+                        ) {
+                          // if succesfully updated in mailchimp
+                          // then add to notify in firebase
+                          updateNotify(notify,state?.info?.nm)
+                          // and update button design
+                          setNotify(!notify);
+                          e.target.value = "👍 You will be notified on release";
+                          alert(val.message);
+                        } else {
+                          // if mailchimp was not updated
+                          e.target.value = "Notify me when released";
+                          alert("failed! try again later.");
+                        }
+                      });
+                    } else {
+                      // ask user to verify email or use valid email address
+                      alert("Validate your email to continue or login using other account.")
+                    }
+                  // }
                 } else {
                   alertConfirm("Login to continue. Want to login now?", () =>
                     navigate("/login")
@@ -178,12 +263,12 @@ const MangaDetails = (props) => {
                 }
               }}
             >
-              <span style={{ width: notify ? 170 : 148 }}>
+              {/* <span >
                 {notify
                   ? "👍 You will be notified on release"
                   : "Notify me when released"}
-              </span>
-            </button>
+              </span> */}
+            </input>
           </div>
           {/* release date */}
           <div className="fcc relDateCont">
@@ -198,24 +283,32 @@ const MangaDetails = (props) => {
             </div>
           </div>
         </div>
-      {/* timer */}
-      <div id="timerCont" className={`gcc ${props.ham?"mt40":"ml30"}`} style={{width:props.ham?"100%":692.67,flex:1.75,padding:props.ham?"20px 0 35px":null}}>
-        <Timer
-          lastUpd={state.info.lu}
-          time={state.info.tm}
-          width={props.ham?300:548}
-          size={props.ham?40:80}
-          ep={state.info.ep}
-          timerStyle={{
-            fontWeight: 700,
-            height: 66,
+        {/* timer */}
+        <div
+          id="timerCont"
+          className={`gcc ${props.ham ? "mt40" : "ml30"}`}
+          style={{
+            width: props.ham ? "100%" : 692.67,
+            flex: 1.75,
+            padding: props.ham ? "20px 0 35px" : null,
           }}
-          headingStyle={{
-            fontSize: props.ham?18:24,
-            marginTop: 20,
-          }}
-        />
-      </div>
+        >
+          <Timer
+            lastUpd={state.info.lu}
+            time={state.info.tm}
+            width={props.ham ? 300 : 548}
+            size={props.ham ? 40 : 80}
+            ep={state.info.ep}
+            timerStyle={{
+              fontWeight: 700,
+              height: 66,
+            }}
+            headingStyle={{
+              fontSize: props.ham ? 18 : 24,
+              marginTop: 20,
+            }}
+          />
+        </div>
       </div>
 
       {/* line */}

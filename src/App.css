@@ -47,7 +47,7 @@ button {
   padding: 20px 0;
   color: white;
 }
-button:disabled,.redBtn:disabled{
+button:disabled,.redBtn:disabled,input[type=button]:disabled{
   background: #5D686C;
   border: 1px solid #4C575B;
   border-radius: 10px;
@@ -218,6 +218,9 @@ button {
 .mb20 {
   margin-bottom: 20px;
 }
+.mb15 {
+  margin-bottom: 20px;
+}
 /* vertical */
 .mv20{
   margin-bottom: 20px;
@@ -351,7 +354,7 @@ width: 320px;
   opacity: 1;
 }
 
-button:hover:enabled {
+button:hover:enabled,input[type=button]:hover:enabled {
   opacity: 0.7;
   cursor: pointer;
 }

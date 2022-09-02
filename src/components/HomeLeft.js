@@ -12,7 +12,7 @@ const HomeLeft = (props) => {
         if (u?.uid?.length) {
           setUid(u.uid);
           getLikedDocs(u.uid).then((o) => {
-            setLikeStat(o.length ? o : []);
+            setLikeStat(o?.length ? o : []);
           });
         }
       } catch (error) {
