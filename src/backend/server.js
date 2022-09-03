@@ -75,16 +75,20 @@ const mchimpUpdateTags = async (user, tag, active) => {
 };
 
 const mchimpAddUser = async (email) => {
-  const response = await client.lists.addListMember(listId, {
-    email_address: email,
-    status: "active",
-  });
+  const response = await mchimp.lists.addListMember(
+    listId,
+    {
+      email_address: email,
+      status: "subscribed",
+    },
+    { skipMergeValidation: true }
+  );
   return response;
 };
 
 // mchnimp end
 
-const afterUpdateTags = (val, notify) => {
+const afterUpdateTags = (val, notify,res) => {
   if (val === null) {
     res.send({
       status: "ok",
@@ -116,7 +120,7 @@ app.post("/addToList", (req, res) => {
     docRef
       .get()
       .then((doc) => {
-        if (doc.exists) {
+        if (doc.exists && doc.data()["sH"].length) {
           // since user exists in mchimp, add tag
           console.log(doc.data(), doc.id);
           // mchimpGetUser(doc.data()["sH"]).then((val) => {
@@ -124,25 +128,37 @@ app.post("/addToList", (req, res) => {
           //   console.log(val);
           // });
           mchimpUpdateTags(doc.data()["sH"], manga, notify).then((val) =>
-            afterUpdateTags(val, notify)
+            afterUpdateTags(val, notify,res)
           );
         } else {
           console.log("user does not exist");
           // if mchimp data does not exist, create new user and add tag
-          mchimpAddUser(req.body.email).then((val) => {
-            console.log(val);
-            //? to be tested ?//
-            // add user hash to firebase
-            db.collection("users")
-              .doc(user)
-              .collection("info")
-              .doc("mchimp")
-              .set({ sH: val.id });
-            // use user data to add tags
-            mchimpUpdateTags(val.id, manga, notify).then((val2) =>
-              afterUpdateTags(val2, notify)
-            );
-          });
+          // console.log(req.body.email);
+          //           mchimpList().then((c)=>{
+          // console.log(c);
+          //           })
+          mchimpAddUser(req.body.email)
+            .then((val) => {
+              console.log(val);
+              //? to be tested ?//
+              // add user hash to firebase
+              db.collection("users")
+                .doc(user)
+                .collection("info")
+                .doc("mchimp")
+                .set({ sH: val.id });
+              // use user data to add tags
+              mchimpUpdateTags(val.id, manga, notify).then((val2) =>
+                afterUpdateTags(val2, notify,res)
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+              res.send({
+                status: "failed",
+                message: "Try again later.",
+              });
+            });
         }
       })
       .catch((err) => console.log(err, "getting mailchimp")); // docRef.get()

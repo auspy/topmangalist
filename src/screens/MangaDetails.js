@@ -5,6 +5,7 @@ import Timer from "../components/Timer";
 import {
   addToLiked,
   auth,
+  createNotify,
   getLikedDocs,
   getMangaDetails,
   getNotifyDocs,
@@ -27,6 +28,7 @@ const MangaDetails = (props) => {
   const [uid, setUid] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const [notifyDocs, setNotifyDocs] = useState();
 
   // get details
   useEffect(() => {
@@ -48,11 +50,15 @@ const MangaDetails = (props) => {
         }
         getLikedDocs(user.uid).then((o) => {
           // console.log(o.includes(state?.info?.nm),o,"o");
-          setLiked(o.includes(state?.info?.nm));
+          if (typeof o === "object") {
+            setLiked(o.includes(state?.info?.nm));
+          }
         });
         getNotifyDocs().then((arr) => {
+          // console.log(arr.length, "arr", arr);
           if (arr.length) {
             // if there are items in notify
+            setNotifyDocs(true); // notify doc was created
             if (arr.includes(state?.info?.nm)) {
               // if items includes this manga
               setNotify(true);
@@ -61,6 +67,7 @@ const MangaDetails = (props) => {
               setNotify(false);
             }
           } else {
+            setNotifyDocs(false); // need to create notify doc in firebase
             // if there is no array
             setNotify(false);
           }
@@ -69,7 +76,7 @@ const MangaDetails = (props) => {
         console.log(error);
       }
     });
-  }, [state?.info?.nm]);
+  }, [state?.info?.nm, notify]);
 
   return (
     <>
@@ -211,50 +218,52 @@ const MangaDetails = (props) => {
               onClick={async (e) => {
                 if (uid) {
                   e.target.value = "Loading";
-                  // setNotify(!notify);
-                  // if (notify) {
-                  //   // remove form mailchimp
-                  //   // remove from notify
-                  //   updateNotify(notify,state?.info?.nm)
-                  //   setNotify(false);
-                  // } else {
-                    if (email) {
-                      // verified email
-                      // get user doc
-                      let data = {};
-                      await userDoc().then((val) => {
-                        data["id"] = val;
-                      });
-                      // send to backend for mailchimp
-                      toFetch("http://localhost:8000/addToList", {
-                        data: data["id"],
-                        mail: email,
-                        manga: state.info.nm,
-                        notify: notify,
-                      }).then((val) => {
-                        console.log(val, "mail");
-                        if (
-                          // val &&
-                          val?.status === "ok"
-                          //  && Object.keys(val).length
-                        ) {
-                          // if succesfully updated in mailchimp
-                          // then add to notify in firebase
-                          updateNotify(notify,state?.info?.nm)
-                          // and update button design
-                          setNotify(!notify);
-                          e.target.value = "👍 You will be notified on release";
-                          alert(val.message);
+                  if (email) {
+                    // verified email
+                    // get user doc
+                    let data = {};
+                    await userDoc().then((val) => {
+                      data["id"] = val;
+                    });
+                    // send to backend for mailchimp
+                    toFetch("http://localhost:8000/addToList", {
+                      data: data["id"],
+                      email: email,
+                      manga: state.info.nm,
+                      notify: notify,
+                    }).then((val) => {
+                      console.log(val, "mail");
+                      if (
+                        // val &&
+                        val?.status === "ok"
+                        //  && Object.keys(val).length
+                      ) {
+                        // if succesfully updated in mailchimp
+                        // then add to notify in firebase
+                        // check if doc exists
+                        if (notifyDocs) {
+                          // if exists update
+                          updateNotify(notify, state?.info?.nm);
                         } else {
-                          // if mailchimp was not updated
-                          e.target.value = "Notify me when released";
-                          alert("failed! try again later.");
+                          // else create doc
+                          createNotify(state?.info?.nm);
                         }
-                      });
-                    } else {
-                      // ask user to verify email or use valid email address
-                      alert("Validate your email to continue or login using other account.")
-                    }
+                        // and update button design
+                        setNotify(!notify);
+                        e.target.value = "👍 You will be notified on release";
+                        alert(val.message);
+                      } else {
+                        // if mailchimp was not updated
+                        e.target.value = "Notify me when released";
+                        alert("failed! try again later.");
+                      }
+                    });
+                  } else {
+                    // ask user to verify email or use valid email address
+                    alert(
+                      "Validate your email to continue or login using other account."
+                    );
+                  }
                   // }
                 } else {
                   alertConfirm("Login to continue. Want to login now?", () =>

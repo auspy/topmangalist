@@ -13,6 +13,7 @@ import {
   addDoc,
   arrayUnion,
   arrayRemove,
+  setDoc,
 } from "firebase/firestore";
 import {
   GoogleAuthProvider,
@@ -289,7 +290,7 @@ export const getNotifyDocs = async () => {
     return info;
   } catch (error) {
     console.log(error);
-    return info
+    return []
   }
 
 };
@@ -305,3 +306,15 @@ export const updateNotify = async (notify, item) => {
     console.log(error);
   }
 };
+
+// create notify docs
+export const createNotify = async(item)=>{
+  let u = await userDoc()
+  try {
+    await setDoc(notifyDoc(u),{
+      ar:[item]
+    })
+  } catch (error) {
+    console.log(error);
+  }
+}
