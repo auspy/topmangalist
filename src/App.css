@@ -155,7 +155,7 @@ h3 {
 .frcsb,
 .fccsb,
 .frcsa,
-.frfs {
+.frfs,.fcfe {
   display: flex;
 }
 
@@ -173,10 +173,12 @@ h3 {
   align-items: flex-start;
 }
 
+.fcfe{align-items: flex-end;}
+
 .fcc,
 .fccsb,
 .fcfs,
-.fcfssb {
+.fcfssb,.fcfe {
   flex-direction: column;
 }
 

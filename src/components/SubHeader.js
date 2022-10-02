@@ -12,7 +12,7 @@ const SubHeader = () => {
                     <a href="/" >upcoming</a>
                     <a href="/" >airing soon</a> */}
         </div>
-        <div className="regu12">My gift to manga/anime community.</div>
+        <div className="regu12">Auspy's gift to manga/anime community.</div>
         {/* right */}
         {/* <button id="surpriseBtn" className="caps" onClick={()=>{
                     alert("funtionality to be added!")

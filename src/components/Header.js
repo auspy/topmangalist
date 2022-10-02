@@ -38,17 +38,20 @@ const Header = (props) => {
             <SearchBar />
           </div>
           {user?.uid ? (
-            <button
-              className={`medi14 ${props.ham ? "mv20" : "ml30"}`}
-              onClick={() => {
-                alertConfirm("Do you want to logout?", () => {
-                  logout();
-                  navigate("/");
-                });
-              }}
-            >
-              {user?.displayName ?? "Logout"}
-            </button>
+            <div className={`${props.ham ? "mv20 fcfs" : "ml30 fcfe regu13"}`}>
+              <span style={props.ham?{marginBottom:15}:{opacity:0.7}}>{user.email}</span>
+              <button
+                className={`medi14`}
+                onClick={() => {
+                  alertConfirm("Do you want to logout?", () => {
+                    logout();
+                    navigate("/");
+                  });
+                }}
+              >
+                {user?.displayName ?? "Logout"}
+              </button>
+            </div>
           ) : (
             <button
               className={`medi14 ${props.ham ? "mv20" : "ml30"}`}

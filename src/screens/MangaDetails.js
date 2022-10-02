@@ -14,7 +14,7 @@ import {
 } from "../firebaseQuery";
 import IconHeart from "../static/icons/IconHeart";
 // import { DiscussionEmbed } from "disqus-react";
-import { onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, sendEmailVerification } from "firebase/auth";
 
 const MangaDetails = (props) => {
   const {
@@ -260,9 +260,15 @@ const MangaDetails = (props) => {
                     });
                   } else {
                     // ask user to verify email or use valid email address
-                    alert(
-                      "Validate your email to continue or login using other account."
-                    );
+                    e.target.value = "Notify me when released";
+                    alertConfirm("Validate your email to continue or login using other account. Validate now?",async()=>{
+                      try {
+                        await sendEmailVerification(getAuth().currentUser)
+                        alert("verification link sent to your mail!")
+                      } catch (error) {
+                        console.log(error, "in sendEmailVerification");
+                      }
+                    })
                   }
                   // }
                 } else {

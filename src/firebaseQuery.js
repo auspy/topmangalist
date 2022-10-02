@@ -47,6 +47,7 @@ onAuthStateChanged(auth, (u) => {
 
 // common locations
 export const getPath = () => {
+  // returns mangas or animes
   let path = window.location.pathname.split("/")[1];
   // console.log("in getpath", path);
   return path === "" ? "mangas" : path;
@@ -130,8 +131,9 @@ export const updateLastUpdated = (obj, key) => {
 // get searched docs
 export const getSearchResults = async (item, cond = "==") => {
   let obj = {};
+  let q = query(mangasColPath(), where("nm", cond, item));
   // console.log(mangasColPath,cond);
-  const docs = await getDocs(query(mangasColPath(), where("nm", cond, item)));
+  const docs = await getDocs(q);
   docs.forEach((item) => {
     //  console.log(item.data(), "=>", item.id);
     obj[item.id] = item.data();
@@ -282,7 +284,6 @@ export const getNotifyDocs = async () => {
   let info = [];
   let u = await userDoc();
   try {
-    
     const docs = await getDoc(notifyDoc(u));
     if (docs.exists()) {
       info = docs.data()["ar"];
@@ -290,9 +291,8 @@ export const getNotifyDocs = async () => {
     return info;
   } catch (error) {
     console.log(error);
-    return []
+    return [];
   }
-
 };
 
 // add to notify
@@ -308,13 +308,35 @@ export const updateNotify = async (notify, item) => {
 };
 
 // create notify docs
-export const createNotify = async(item)=>{
-  let u = await userDoc()
+export const createNotify = async (item) => {
+  let u = await userDoc();
   try {
-    await setDoc(notifyDoc(u),{
-      ar:[item]
-    })
+    await setDoc(notifyDoc(u), {
+      ar: [item],
+    });
   } catch (error) {
     console.log(error);
   }
-}
+};
+
+// // TO FIND INPUT/SEARCHED VALUE
+export const getSearched = async (find) => {
+  // let obj = {};
+  const arr=[]
+  let findArr = find.toLowerCase().trim().split(" ").filter(item=>item!==""&&item!==" ")
+  console.log(find,findArr, "to be searched");
+
+  // to select query based on page
+  const q = query(
+    collection(db, getPath()),
+    where("tags", "array-contains-any", findArr)
+  );
+
+  const docs = await getDocs(q);
+  docs.forEach((doc) => {
+    // obj[doc.id] = doc.data();
+    arr.push(doc.data())
+  });
+  console.log("Search result:", arr);
+  return arr;
+};
