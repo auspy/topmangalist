@@ -52,8 +52,8 @@ const ItemBox = (props) => {
       </button>
       <span className="medi14 mt5">{props.info.nm}</span>
       {new Date().getDay() !== Number(props.info.tm[0]) && (
-        <span className="regu13" style={{ margin: "5px 0 10px" }}>
-          Episode {props.info.ep}
+        <span className="regu13" style={{ margin: "10px 0 5px" }}>
+          Next episode in
         </span>
       )}
       <Timer

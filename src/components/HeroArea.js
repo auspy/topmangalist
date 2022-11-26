@@ -65,7 +65,7 @@ return  window.onresize = handleResize
           >
             <h1 style={{ alignSelf: "flex-start" }}>{top4[0].nm}</h1>
             <div className="frcsb" style={{ width: "100%" }}>
-              <h2 className="regu">Episode {top4[0].ep}</h2>
+              {/* <h2 className="regu">Episode {top4[0].ep}</h2> */}
               <Timer
                 lastUpd={top4[0].lu}
                 size={18}
@@ -121,7 +121,7 @@ return  window.onresize = handleResize
             >
               <h2 style={{ alignSelf: "flex-start" }}>{top4[1].nm}</h2>
               <div className="frcsb" style={{ width: "100%" }}>
-                <h3 className="regu">Episode {top4[1].ep}</h3>
+                {/* <h3 className="regu">Episode {top4[1].ep}</h3> */}
                 <Timer
                   lastUpd={top4[1].lu}
                   size={18}

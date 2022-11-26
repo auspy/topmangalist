@@ -25,13 +25,30 @@ export const alertConfirm = (txt, onConfirm) => {
 };
 
 // FETCH
-export const toFetch = async (url, data={}) => {
-  return await fetch(url, {
-    method: "POST",
+export const toFetch = async (url, data, method = "POST", params = {}) => {
+  // header
+  const header = {
+    method: method,
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     redirect: "follow",
-    body: JSON.stringify(data),
-  })
+  };
+  if (data) {
+    header["body"] = JSON.stringify(data);
+  }
+  // url and params
+  let finalurl = url;
+  params &&
+    Object.keys(params).forEach((item, i) => {
+      finalurl =
+        finalurl +
+        "?" +
+        String(item) +
+        "=" +
+        String(params[item]) +
+        (i === Object.keys(params).length - 1 ? "" : "&");
+    });
+
+  return await fetch(finalurl, header)
     .then((res) => res.ok && res.json())
     .then((info) => {
       // console.log(info, "res");
@@ -40,3 +57,13 @@ export const toFetch = async (url, data={}) => {
     .catch((err) => console.log(err, "error in fetch ", url));
 };
 
+// CREATE TAGS
+export const createTags = (item) => {
+  return item
+    ?.toLowerCase()
+    .replace(/[^\w\s]/gi, "")
+    .split(" ")
+    .filter((item) => {
+      return item !== " " && item !== "";
+    });
+};

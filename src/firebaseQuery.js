@@ -8,12 +8,13 @@ import {
   getDoc,
   updateDoc,
   doc,
-  increment,
+  // increment,
   where,
   addDoc,
   arrayUnion,
   arrayRemove,
   setDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import {
   GoogleAuthProvider,
@@ -24,6 +25,7 @@ import {
   signOut,
 } from "firebase/auth";
 import db, { firebaseApp } from "./firebase";
+import { createTags } from "./common";
 
 // common variables
 export const auth = getAuth(firebaseApp);
@@ -82,7 +84,7 @@ export const getMangas = async () => {
   docs.forEach((key) => {
     // console.log(key.data(),"=>",key.id);
     obj[key.id] = key.data();
-    updateLastUpdated(key.data(), key.id);
+    // updateLastUpdated(key.data(), key.id);
   });
   return obj;
 };
@@ -99,34 +101,34 @@ export const getLikedMangas = async (lim) => {
     obj[key.id] = key.data();
     arr.push({ ...key.data(), id: key.id });
     // to update last updated
-    updateLastUpdated(key.data(), key.id);
+    // updateLastUpdated(key.data(), key.id);
   });
   return [obj, arr];
 };
 
-// update last updated
-export const updateLastUpdated = (obj, key) => {
-  // get today's day
-  const todayDay = new Date().getDay();
-  // get needed day
-  const mangaDay = Number(obj.tm[0]);
-  // get num of days left till needed date
-  const diff = mangaDay - todayDay;
-  // update last updated
-  //   console.log(obj.lu.toDate() < new Date(),"obj.lu < new Date()",obj.lu.toDate(),new Date());
-  if (diff < 0 && obj.lu.toDate() < new Date()) {
-    console.log("update", obj.nm);
+// update last updated, episode number
+// const updateLastUpdated = (obj, key) => {
+//   // get today's day
+//   const todayDay = new Date().getDay();
+//   // get needed day
+//   const mangaDay = Number(obj.tm[0]);
+//   // get num of days left till needed date
+//   const diff = mangaDay - todayDay;
+//   // update last updated
+//   //   console.log(obj.lu.toDate() < new Date(),"obj.lu < new Date()",obj.lu.toDate(),new Date());
+//   if (diff < 0 && obj.lu.toDate() < new Date()) {
+//     console.log("update", obj.nm);
 
-    updateDoc(doc(db, getPath(), key), {
-      lu: new Date(
-        new Date().getFullYear(),
-        new Date().getMonth(),
-        new Date().getDate() + diff + 7
-      ),
-      ep: increment(1),
-    });
-  }
-};
+//     updateDoc(doc(db, getPath(), key), {
+//       lu: new Date(
+//         new Date().getFullYear(),
+//         new Date().getMonth(),
+//         new Date().getDate() + diff + 7
+//       ),
+//       ep: increment(1),
+//     });
+//   }
+// };
 
 // get searched docs
 export const getSearchResults = async (item, cond = "==") => {
@@ -271,9 +273,9 @@ export const getLikedDocs = async (id) => {
 // CAPITALISE
 export const toCapitalise = (item) => {
   return item
-    .split(" ")
+    ?.split(" ")
     .map((item) => {
-      return item[0].toUpperCase() + item.substring(1);
+      return item[0].toUpperCase() + item.substring(1).toLowerCase();
     })
     .join(" ");
 };
@@ -322,9 +324,13 @@ export const createNotify = async (item) => {
 // // TO FIND INPUT/SEARCHED VALUE
 export const getSearched = async (find) => {
   // let obj = {};
-  const arr=[]
-  let findArr = find.toLowerCase().trim().split(" ").filter(item=>item!==""&&item!==" ")
-  console.log(find,findArr, "to be searched");
+  const arr = [];
+  let findArr = find
+    .toLowerCase()
+    .trim()
+    .split(" ")
+    .filter((item) => item !== "" && item !== " ");
+  console.log(find, findArr, "to be searched");
 
   // to select query based on page
   const q = query(
@@ -335,8 +341,40 @@ export const getSearched = async (find) => {
   const docs = await getDocs(q);
   docs.forEach((doc) => {
     // obj[doc.id] = doc.data();
-    arr.push(doc.data())
+    arr.push(doc.data());
   });
   console.log("Search result:", arr);
   return arr;
+};
+
+// ADD NEW MANGA/ANIME
+export const addNewMangaAnime = async (
+  name,
+  type,
+  time,
+  day,
+  imgUrl,
+  tags = ""
+) => {
+  try {
+    // const set time
+    const tm = day + "_" + time;
+    console.log(db,"db");
+    const data = {
+      im: imgUrl,
+      lk: 0,
+      lu: serverTimestamp(),
+      nm: toCapitalise(name),
+      tags: [...createTags(name + " " + tags)],
+      tm: tm,
+    };
+    console.log(name, type, tm, imgUrl, createTags(name + " " + tags));
+    await setDoc(doc(db,type,new Date().getTime().toString()), data);
+    alert("Success")
+    return null;
+  } catch (error) {
+    console.log(error, "in addNewMangaAnime");
+    alert(error, "Try Again!");
+    return null;
+  }
 };

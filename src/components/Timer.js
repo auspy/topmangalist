@@ -87,7 +87,7 @@ const Timer = (props) => {
     return (
       <>
         <span className="regu12 mt5">
-          Episode {props.ep} will be released today!
+          New episode will be released today!
         </span>
       </>
     );
